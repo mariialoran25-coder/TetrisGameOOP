@@ -31,8 +31,6 @@ public:
     };
 };
 
-
-
 class Board {
 private:
     std::vector<std::vector<forBoard>> grid;
@@ -81,30 +79,156 @@ public:
 
 
 
-
-
-
-
-
-
 class Tetrimino {
-private:
-    int id_shape = 0;
-    int width = 0;
-    int height = 0;
-    int coordX = 0;
-    int coordY = 0;
-    int color_ = ' ';
+protected:
+    std::vector<std::vector<int>> tetrimo;
+    int coordX =0;
+    int coordY =0;
+    std::string color = "white";
 public:
+    Tetrimino(){}
     virtual ~Tetrimino() {}
-    virtual void draw(Board& board) = 0;
-    virtual bool contains(int px, int py) = 0;
-    virtual void updPrmtrs(int newWidth, int newHeight) = 0;
-    virtual void updCoordinates(int newX, int newY) = 0;
-    virtual void setColor(const std::string& newColor) = 0;
-    virtual std::string serialise() = 0;
+    virtual void updCoordinates(int newX, int newY) {
+        coordX = newX;
+        coordY = newY;
+    }
+
+    virtual void draw(Board& board) {
+        size_t n = tetrimo.size();
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (tetrimo[i][j] == 1)
+                {
+                    int boardX = coordX + j;
+                    int boardY = coordY + i;
+                    board.setSym(boardX, boardY, '[]', color);
+                }
+            }
+        }
+    }
+
     void clear();
+
+    virtual void rotate() {
+        std::vector<std::vector<int>> matrix_rotate = tetrimo; 
+        size_t n = tetrimo.size();
+        for (int y = 0; y < n; ++y) {
+            for (int x = 0; x < n; ++x)
+            {
+                tetrimo[x][n - 1 - y] = matrix_rotate[y][x];
+            }
+        }
+    }
+    //{ 1,0,0,0 }, { 1,1,1,1 },
+    //{ 1,0,0,0 }, { 0,0,0,0 },
+    //{ 1,0,0,0 }, { 0,0,0,0 },
+    //{ 1,0,0,0 }, { 0,0,0,0 },
+
+    std::vector<std::vector<int>> getMatrix() const {
+        return tetrimo;
+    }
+
+    bool canRotate(Board& board) {
+        size_t n = tetrimo.size();
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (tetrimo[i][j] == 1)
+                {
+                    int boardX = coordX + j;
+                    int boardY = coordY + i;
+                    if (boardX < 0 || boardX >= BOARD_WIDTH || boardY >= BOARD_HEIGHT || boardY < 0) {
+                        return false;
+                    }
+                    if (board.getSym(boardX, boardY) != ' ') {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 };
+class Tetrimo_Palka : public Tetrimino {
+public:
+    Tetrimo_Palka() {
+        tetrimo = {
+            {1,0,0,0},
+            {1,0,0,0},
+            {1,0,0,0},
+            {1,0,0,0},
+        };
+        color = "cyan";
+    }
+};
+
+class Tetrimo_J : public Tetrimino {
+public:
+    Tetrimo_J() {
+        tetrimo = {
+            {0,1,0},
+            {0,1,0},
+            {1,1,0}
+        };
+        color = "blue";
+    }
+};
+
+class Tetrimo_L : public Tetrimino {
+public:
+    Tetrimo_L() {
+        tetrimo = {
+            {1,0,0},
+            {1,0,0},
+            {1,1,0}
+        };
+        color = "orange";
+    }
+};
+class Tetrimo_Box : public Tetrimino {
+public:
+    Tetrimo_Box() {
+        tetrimo = {
+           {1,1},
+           {1,1}
+        };
+        color = "yellow";
+    }
+};
+
+class Tetrimo_S : public Tetrimino {
+public:
+    Tetrimo_S() {
+        tetrimo = {
+            {0,1,1},
+            {1,1,0},
+            {0,0,0}
+        };
+        color = "green";
+    }
+};
+class Tetrimo_T : public Tetrimino {
+public:
+    Tetrimo_T() {
+        tetrimo = {
+            {1,1,1},
+            {0,1,0},
+            {0,1,0}
+        };
+        color = "Purple";
+    }
+};
+class Tetrimo_Z : public Tetrimino {
+public:
+    Tetrimo_Z() {
+        tetrimo = {
+            {1,1,0},
+            {0,1,1},
+            {0,0,0}
+        };
+        color = "red";
+    }
+};
+
 
 class Point {
 private:
@@ -287,7 +411,9 @@ int main()
     //Renderer renderer;
     //renderer.run(game);
     Board board;
-
+    Tetrimino tetrimo;
+    Tetrimo_Box box;
+    box.draw(board);
     board.initBorder();
     TetrisGame game(board);
     Renderer render;

@@ -1,2 +1,4 @@
 ﻿  main.cpp
+C:\2курсПрограмнаІнженеріяKSE\CS440OopPracticesAndDesignElements\Assigment3OopDesign\Assigment3OopDesign\main.cpp(104,50): warning C4305: 'argument': truncation from 'int' to 'char'
+C:\2курсПрограмнаІнженеріяKSE\CS440OopPracticesAndDesignElements\Assigment3OopDesign\Assigment3OopDesign\main.cpp(104,50): warning C4309: 'argument': truncation of constant value
   Assigment3OopDesign.vcxproj -> C:\2курсПрограмнаІнженеріяKSE\CS440OopPracticesAndDesignElements\Assigment3OopDesign\x64\Debug\Assigment3OopDesign.exe
