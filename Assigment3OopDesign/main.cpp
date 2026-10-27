@@ -49,12 +49,26 @@ public:
             for (int j = 0; j < BOARD_WIDTH; ++j) {
                 if ( i == BOARD_HEIGHT - 1) {
                     grid[i][j].symbol = '-';
+                    grid[i][j].color = "";
                 }
                 else if (j == 0 || j == BOARD_WIDTH - 1) {
                     grid[i][j].symbol = '|';
+                    grid[i][j].color = "";
                 }
                 else {
                     grid[i][j].symbol = ' ';
+                    grid[i][j].color = "";
+                }
+            }
+        }
+    }
+
+    void clearInner() {
+        for (int i = 0; i < BOARD_HEIGHT; ++i) {
+            for (int j = 0; j < BOARD_WIDTH; ++j) {
+                if (i < BOARD_HEIGHT - 1 && j>0 && j < BOARD_WIDTH - 1) {
+                    grid[i][j].symbol = ' ';
+                    grid[i][j].color = "";
                 }
             }
         }
@@ -258,6 +272,7 @@ public:
             case 4:return new Tetrimo_S();
             case 5:return new Tetrimo_T();
             case 6:return new Tetrimo_Z();
+            default: return nullptr;
         }
     }
 };
@@ -298,11 +313,11 @@ public:
             cout << ": coin already taken" << "\n";
         }
     }
-    void SpawnNewShape(Tetrimino*& currT, Board& board) {
+    void SpawnNewShape(Tetrimino*& currT, Board& board , int& x, int& y) {
         currT = TetriminoFactory::createRandom();
-        int startX = BOARD_WIDTH / 2;
-        int startY = 0;
-        currT->updCoordinates(startX, startY);
+        x= BOARD_WIDTH / 2;
+        y = 0;
+        currT->updCoordinates(x, y);
         currT->draw(board);
     }
     void reset();
@@ -333,11 +348,18 @@ public:
         }
         return true;
     }
-    void moveLeft(Board& board, Tetrimino* tet,int x,int y) {
+    void moveLeft(Board& board, Tetrimino* tet,int& x,int& y) {
         if (tet != nullptr) {
+            board.clearInner();
             if (canMoveLeft(board, *tet, x, y)) {
-                tet->updCoordinates(x-1, y);
+                x = x - 1;
+                tet->updCoordinates(x, y);
+                std::cout << "Moved left" << x << "\n";
             }
+            else {
+                std::cout << "Can`t Move left \n";
+            }
+            tet->draw(board);
         }
     }
     bool canMoveRight(Board& board, Tetrimino& tet, int coordX, int  coordY) {
@@ -359,11 +381,18 @@ public:
         }
         return true;
     }
-    void moveRight(Board& board, Tetrimino* tet, int x, int y) {
+    void moveRight(Board& board, Tetrimino* tet, int& x, int& y) {
         if (tet != nullptr) {
+            board.clearInner();
             if (canMoveRight(board, *tet, x, y)) {
-                tet->updCoordinates(x + 1, y);
+                x = x + 1;
+                tet->updCoordinates(x , y);
+                std::cout << "Moved right" << x << "\n";
             }
+            else {
+                std::cout << "Can`t Move right \n";
+            }
+            tet->draw(board);
         }
     }
 
@@ -386,20 +415,29 @@ public:
         }
         return true;
     }
-    void SoftDrop(Board& board, Tetrimino* tet, int x, int y) {
+    void SoftDrop(Board& board, Tetrimino* tet, int& x, int& y) {
         if (tet != nullptr) {
+            board.clearInner();
             if (canSoftDrop(board, *tet, x, y)) {
-                tet->updCoordinates(x, y+1);
+                y = y + 1;
+                tet->updCoordinates(x, y);
+                std::cout << "Moved soft drop" << x << "\n";
             }
+            else {
+                std::cout << "Can`t Move soft drop \n";
+            }
+            tet->draw(board);
         }
     }
-    void hardDrop(Board& board, Tetrimino* tet, int x, int& y) {
+    void hardDrop(Board& board, Tetrimino* tet, int& x, int& y) {
         if (tet != nullptr) {
+            board.clearInner();
             while (canSoftDrop(board, *tet, x, y) ){
                 y = y + 1;
             }
             tet->updCoordinates(x, y);
             tet->draw(board);
+            std::cout << "Moved hard drop" << x << "\n";
         }
     }
 
@@ -430,7 +468,8 @@ private:
     sf::RenderWindow window;
     sf::Font font;
     bool fontLoaded;
-    void processEvents(TetrisGame& game)
+
+    void processEvents(TetrisGame& game, Tetrimino*& currentTet, int& x, int& y)
     {
         while (const std::optional<sf::Event> event = window.pollEvent())
         {
@@ -438,13 +477,26 @@ private:
             {
                 window.close();
             }
-            else if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>())
+            else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
-                if (mousePressed->button == sf::Mouse::Button::Left)
-                {
-                    handleMouseClick(game, mousePressed->position.x, mousePressed->position.y);
+                Board& board = game.getBoard();
+                if (currentTet != nullptr) {
+                    if (keyPressed->code == sf::Keyboard::Key::Left)
+                    {
+                        game.moveLeft(board, currentTet, x, y);
+                    }
+                    else if (keyPressed->code == sf::Keyboard::Key::Right) {
+                        game.moveRight(board, currentTet, x, y);
+                    }
+                    else if (keyPressed->code == sf::Keyboard::Key::Down) {
+                        game.SoftDrop(board, currentTet, x, y);
+                    }
+                    else if (keyPressed->code == sf::Keyboard::Key::Space) {
+                        game.hardDrop(board, currentTet, x, y);
+                    }
                 }
             }
+
         }
     }
 
@@ -460,7 +512,7 @@ private:
         Board& board = const_cast<TetrisGame&>(game).getBoard();
         for (int i = 0; i < BOARD_HEIGHT; ++i) {
             for (int j = 0; j < BOARD_WIDTH; ++j) {
-                char sym = board.getSym( j,i);
+                char sym = board.getSym(j, i);
                 sf::RectangleShape cell(sf::Vector2f(static_cast<float>(cellSize - 1), static_cast<float>(cellSize - 1)));
                 cell.setPosition(sf::Vector2f(static_cast<float>(j * cellSize), static_cast<float>(i * cellSize)));
 
@@ -471,13 +523,14 @@ private:
                     cell.setFillColor(sf::Color::Red);
                 }
                 else {
-                    cell.setFillColor(sf::Color(30,30,30));
+                    cell.setFillColor(sf::Color(30, 30, 30));
                 }
                 window.draw(cell);
             }
         }
         window.display();
     }
+
 public:
     Renderer()
         : cellSize(30),
@@ -490,11 +543,12 @@ public:
         window.setFramerateLimit(60);
     }
 
-    void run(TetrisGame& game)
+    void run(TetrisGame& game , Tetrimino*& activeTet, int& x, int& y)
     {
         while (window.isOpen())
         {
-            processEvents(game);
+            processEvents(game, activeTet,x,y);
+            window.clear();
             render(game);
         }
     }
@@ -502,22 +556,27 @@ public:
 
 int main()
 {
+
     srand(static_cast<unsigned int>(time(0)));
-    //Renderer renderer;
-    //renderer.run(game);
+   
     Board board;
     board.initBorder();
 
     TetrisGame game(board);
     Tetrimino* activeTermino = nullptr;
-   
-    game.SpawnNewShape(activeTermino, board);
+    
+    int x = 0;
+    int y = 0;
+    game.SpawnNewShape(activeTermino, board,x,y);
 
+    //if (activeTermino) {
+    //    activeTermino->updCoordinates(x, y);
+    //    activeTermino->draw(board);
+    //}
     Renderer render;
-    render.run(game);
+    render.run(game, activeTermino,x,y);
 
     delete activeTermino;
-    
-    std::cin.get();
+ 
     return 0;
 }
