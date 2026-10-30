@@ -145,10 +145,34 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Board.cpp" />
+    <ClCompile Include="ColorCode.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\User\Downloads\SFML-3.1.0-windows-vc17-64-bit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\User\Downloads\SFML-3.1.0-windows-vc17-64-bit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Tetrimino.cpp" />
+    <ClCompile Include="Tetrimino.h" />
+    <ClCompile Include="TetriminoFactory.cpp" />
+    <ClCompile Include="Tetrimo_Box.cpp" />
+    <ClCompile Include="Tetrimo_J.cpp" />
+    <ClCompile Include="Tetrimo_L.cpp" />
+    <ClCompile Include="Tetrimo_Palka.cpp" />
+    <ClCompile Include="Tetrimo_S.cpp" />
+    <ClCompile Include="Tetrimo_T.cpp" />
+    <ClCompile Include="Tetrimo_Z.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Board.h" />
+    <ClInclude Include="ColorCode.h" />
+    <ClInclude Include="TetriminoFactory.h" />
+    <ClInclude Include="Tetrimo_Box.h" />
+    <ClInclude Include="Tetrimo_J.h" />
+    <ClInclude Include="Tetrimo_L.h" />
+    <ClInclude Include="Tetrimo_Palka.h" />
+    <ClInclude Include="Tetrimo_S.h" />
+    <ClInclude Include="Tetrimo_T.h" />
+    <ClInclude Include="Tetrimo_Z.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

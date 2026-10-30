@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\Tetrimino.obj",
+            "outputs": [
+                "x64\\Debug\\Tetrimino.h_5F9DFB520D7A520.ifc.dt.module.json",
+                "x64\\Debug\\Tetrimino.h_5F9DFB520D7A520.ifc.dt.d.json",
+                "x64\\Debug\\Tetrimino.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\2курсПрограмнаІнженеріяKSE\\CS440OopPracticesAndDesignElements\\Assigment3OopDesign\\Assigment3OopDesign\\Tetrimino.h",
+                    "source-path": "c:\\2курспрограмнаінженеріяkse\\cs440ooppracticesanddesignelements\\assigment3oopdesign\\assigment3oopdesign\\tetrimino.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

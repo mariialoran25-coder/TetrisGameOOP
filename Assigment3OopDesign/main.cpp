@@ -4,247 +4,182 @@
 #include <optional>
 #include <iostream>
 #include <ctime>
+
+#include "ColorCode.h"
+#include "Board.h"
+#include "Tetrimino.h"
+#include "TetriminoFactory.h"
 using namespace std;
 
-const int BOARD_WIDTH = 21;
-const int BOARD_HEIGHT = 29;
-
-struct forBoard {
-    char symbol = ' ';
-    std::string color = "";
-};
-
-class ColorCode {
-//private:
+//const int BOARD_WIDTH = 21;
+//const int BOARD_HEIGHT = 29;
 //
-//    struct ColorPair {
-//        std::string name;
-//        std::string code;
-//    };
-public:
-    static std::string GetColorCode(const std::string& colorName) {
-        if (colorName == "red") return "\033[31m";
-        if (colorName == "blue")return "\033[34m";
-        if (colorName == "yellow") return "\033[33m";
-        if (colorName == "green") return "\033[32m";
-        if (colorName == "black") return "\033[30m";
-        if (colorName == "pink") return "\033[38;2;255;192;203m";
-        return "\033[0m";
-    };
-};
+//struct forBoard {
+//    char symbol = ' ';
+//    std::string color = "";
+//};
 
-class Board {
-private:
-    std::vector<std::vector<forBoard>> grid;
-public:
-    Board() : grid(BOARD_HEIGHT, std::vector<forBoard>(BOARD_WIDTH)) {}
-    void setSym(int x, int y, char symbol, const std::string& color) {
-        if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
-            grid[y][x].symbol = symbol;
-            grid[y][x].color = color;
-        }
-    }
-    void initBorder() {
-        for (int i = 0; i < BOARD_HEIGHT; ++i) {
-            for (int j = 0; j < BOARD_WIDTH; ++j) {
-                if ( i == BOARD_HEIGHT - 1) {
-                    grid[i][j].symbol = '-';
-                    grid[i][j].color = "";
-                }
-                else if (j == 0 || j == BOARD_WIDTH - 1) {
-                    grid[i][j].symbol = '|';
-                    grid[i][j].color = "";
-                }
-                else {
-                    grid[i][j].symbol = ' ';
-                    grid[i][j].color = "";
-                }
-            }
-        }
-    }
+//class Board {
+//private:
+//    std::vector<std::vector<forBoard>> grid;
+//public:
+//    Board() : grid(BOARD_HEIGHT, std::vector<forBoard>(BOARD_WIDTH)) {}
+//    void setSym(int x, int y, char symbol, const std::string& color) {
+//        if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
+//            grid[y][x].symbol = symbol;
+//            grid[y][x].color = color;
+//        }
+//    }
+//    void initBorder() {
+//        for (int i = 0; i < BOARD_HEIGHT; ++i) {
+//            for (int j = 0; j < BOARD_WIDTH; ++j) {
+//                if ( i == BOARD_HEIGHT - 1) {
+//                    grid[i][j].symbol = '-';
+//                    grid[i][j].color = "";
+//                }
+//                else if (j == 0 || j == BOARD_WIDTH - 1) {
+//                    grid[i][j].symbol = '|';
+//                    grid[i][j].color = "";
+//                }
+//                else {
+//                    grid[i][j].symbol = ' ';
+//                    grid[i][j].color = "";
+//                }
+//            }
+//        }
+//    }
+//
+//    void clearInner() {
+//        for (int i = 0; i < BOARD_HEIGHT; ++i) {
+//            for (int j = 0; j < BOARD_WIDTH; ++j) {
+//                if (i < BOARD_HEIGHT - 1 && j>0 && j < BOARD_WIDTH - 1) {
+//                    if (grid[i][j].symbol != '#') {
+//                        grid[i][j].symbol = ' ';
+//                        grid[i][j].color = "";
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    void print() {
+//        for (int i = 0; i < BOARD_HEIGHT; ++i) {
+//            for (int j = 0; j < BOARD_WIDTH; ++j) {
+//                if (!grid[i][j].color.empty()) {
+//                    ColorCode::GetColorCode(grid[i][j].color);
+//                }
+//                std::cout << grid[i][j].symbol;
+//                std::cout << "\033[0m";
+//            }
+//            std::cout << "\n";
+//        }
+//    }
+//    char getSym(int x, int y) const {
+//        if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
+//            return grid[y][x].symbol;
+//        }
+//        return ' ';
+//    }
+//    bool isFullLine(int& y) const
+//    {
+//        for (int j = 1; j < BOARD_WIDTH - 1; ++j) {
+//            char sym = getSym(j, y);
+//            if (sym != '#')
+//            {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+//    void DelFullLine() {
+//        for (int i = BOARD_HEIGHT - 1; i > 0; --i) {
+//            if (isFullLine(i)) {
+//                for(int row = i; row > 1; --row)
+//                for (int j = 1; j < BOARD_WIDTH - 1; ++j) {
+//                    grid[row][j] = grid[row - 1][j];
+//                }
+//                for (int j = 1; j < BOARD_WIDTH - 1; ++j) {
+//                    grid[1][j].symbol = ' ';
+//                    grid[1][j].color = "";
+//                }
+//                --i;
+//            }
+//        }
+//    }
+//};
 
-    void clearInner() {
-        for (int i = 0; i < BOARD_HEIGHT; ++i) {
-            for (int j = 0; j < BOARD_WIDTH; ++j) {
-                if (i < BOARD_HEIGHT - 1 && j>0 && j < BOARD_WIDTH - 1) {
-                    if (grid[i][j].symbol != '#') {
-                        grid[i][j].symbol = ' ';
-                        grid[i][j].color = "";
-                    }
-                }
-            }
-        }
-    }
-    void print() {
-        for (int i = 0; i < BOARD_HEIGHT; ++i) {
-            for (int j = 0; j < BOARD_WIDTH; ++j) {
-                if (!grid[i][j].color.empty()) {
-                    std::cout << ColorCode::GetColorCode(grid[i][j].color);
-                }
-                std::cout << grid[i][j].symbol;
-                std::cout << "\033[0m";
-            }
-            std::cout << "\n";
-        }
-    }
-    char getSym(int x, int y) const {
-        if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
-            return grid[y][x].symbol;
-        }
-        return ' ';
-    }
-};
-
-class Tetrimino {
-protected:
-    std::vector<std::vector<int>> tetrimo;
-    int coordX =0;
-    int coordY =0;
-    std::string color = "white";
-public:
-    Tetrimino(){}
-    virtual ~Tetrimino() {}
-    virtual void updCoordinates(int newX, int newY) {
-        coordX = newX;
-        coordY = newY;
-    }
-    virtual void draw(Board& board) {
-        size_t n = tetrimo.size();
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (tetrimo[i][j] == 1)
-                {
-                    int boardX = coordX + j;
-                    int boardY = coordY + i;
-                    board.setSym(boardX, boardY, '*', color);
-                }
-            }
-        }
-    }
-
-    void clear();
-
-    virtual void rotate() {
-        std::vector<std::vector<int>> matrix_rotate = tetrimo; 
-        size_t n = tetrimo.size();
-        for (int y = 0; y < n; ++y) {
-            for (int x = 0; x < n; ++x)
-            {
-                tetrimo[x][n - 1 - y] = matrix_rotate[y][x];
-            }
-        }
-    }
-    //{ 1,0,0,0 }, { 1,1,1,1 },
-    //{ 1,0,0,0 }, { 0,0,0,0 },
-    //{ 1,0,0,0 }, { 0,0,0,0 },
-    //{ 1,0,0,0 }, { 0,0,0,0 },
-
-    std::vector<std::vector<int>> getMatrix() const {
-        return tetrimo;
-    }
-    std::string getColor() const {
-        return  color;
-    }
-    bool canRotate(Board& board) {
-        size_t n = tetrimo.size();
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (tetrimo[i][j] == 1)
-                {
-                    int boardX = coordX + j;
-                    int boardY = coordY + i;
-                    if (boardX < 0 || boardX >= BOARD_WIDTH || boardY >= BOARD_HEIGHT || boardY < 0) {
-                        return false;
-                    }
-                    if (board.getSym(boardX, boardY) != ' ') {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-};
-class Tetrimo_Palka : public Tetrimino {
-public:
-    Tetrimo_Palka() {
-        tetrimo = {
-            {1,0,0,0},
-            {1,0,0,0},
-            {1,0,0,0},
-            {1,0,0,0},
-        };
-        color = "cyan";
-    }
-};
-
-class Tetrimo_J : public Tetrimino {
-public:
-    Tetrimo_J() {
-        tetrimo = {
-            {0,1,0},
-            {0,1,0},
-            {1,1,0}
-        };
-        color = "blue";
-    }
-};
-
-class Tetrimo_L : public Tetrimino {
-public:
-    Tetrimo_L() {
-        tetrimo = {
-            {1,0,0},
-            {1,0,0},
-            {1,1,0}
-        };
-        color = "orange";
-    }
-};
-class Tetrimo_Box : public Tetrimino {
-public:
-    Tetrimo_Box() {
-        tetrimo = {
-           {1,1},
-           {1,1}
-        };
-        color = "yellow";
-    }
-};
-
-class Tetrimo_S : public Tetrimino {
-public:
-    Tetrimo_S() {
-        tetrimo = {
-            {0,1,1},
-            {1,1,0},
-            {0,0,0}
-        };
-        color = "green";
-    }
-};
-class Tetrimo_T : public Tetrimino {
-public:
-    Tetrimo_T() {
-        tetrimo = {
-            {1,1,1},
-            {0,1,0},
-            {0,1,0}
-        };
-        color = "Purple";
-    }
-};
-class Tetrimo_Z : public Tetrimino {
-public:
-    Tetrimo_Z() {
-        tetrimo = {
-            {1,1,0},
-            {0,1,1},
-            {0,0,0}
-        };
-        color = "red";
-    }
-};
+//class Tetrimino {
+//protected:
+//    std::vector<std::vector<int>> tetrimo;
+//    int coordX =0;
+//    int coordY =0;
+//    std::string color = "white";
+//public:
+//    Tetrimino(){}
+//    virtual ~Tetrimino() {}
+//    virtual void updCoordinates(int newX, int newY) {
+//        coordX = newX;
+//        coordY = newY;
+//    }
+//    virtual void draw(Board& board) {
+//        size_t n = tetrimo.size();
+//        for (int i = 0; i < n; ++i) {
+//            for (int j = 0; j < n; ++j) {
+//                if (tetrimo[i][j] == 1)
+//                {
+//                    int boardX = coordX + j;
+//                    int boardY = coordY + i;
+//                    board.setSym(boardX, boardY, '*', color);
+//                }
+//            }
+//        }
+//    }
+//
+//    virtual void rotate(Board& board) {
+//        if (canRotate(board)) {
+//            std::vector<std::vector<int>> matrix_rotate = tetrimo;
+//            size_t n = tetrimo.size();
+//            for (int y = 0; y < n; ++y) {
+//                for (int x = 0; x < n; ++x)
+//                {
+//                    tetrimo[x][n - 1 - y] = matrix_rotate[y][x];
+//                }
+//            }
+//        }
+//    }
+//
+//    std::vector<std::vector<int>> getMatrix() const {
+//        return tetrimo;
+//    }
+//    std::string getColor() const {
+//        return  color;
+//    }
+//    bool canRotate(Board& board) {
+//        std::vector<std::vector<int>> temp = tetrimo;
+//        size_t n = tetrimo.size();
+//        for (int i = 0; i < n; ++i) {
+//            for (int j = 0; j < n; ++j) {
+//
+//                temp[i][j] = tetrimo[j][n - 1 - i];
+//            }
+//        }
+//        for (int i = 0; i < n; ++i) {
+//            for (int j = 0; j < n; ++j) {
+//                if (temp[i][j] == 1)
+//                {
+//                    int boardX = coordX + j;
+//                    int boardY = coordY + i;
+//                    if (boardX < 0 || boardX >= BOARD_WIDTH || boardY >= BOARD_HEIGHT || boardY < 0) {
+//                        return false;
+//                    }
+//                    if (board.getSym(boardX, boardY) != ' ') {
+//                        return false;
+//                    }
+//                }
+//            }
+//        }
+//        return true;
+//    }
+//};
 
 
 class Point {
@@ -262,22 +197,6 @@ public:
     }
     bool canTake() {
        
-    }
-};
-class TetriminoFactory {
-public:
-    static Tetrimino* createRandom() {
-        int type = rand() % 7;
-        switch (type) {
-            case 0:return new Tetrimo_Palka();
-            case 1:return new Tetrimo_J();
-            case 2:return new Tetrimo_L();
-            case 3:return new Tetrimo_Box();
-            case 4:return new Tetrimo_S();
-            case 5:return new Tetrimo_T();
-            case 6:return new Tetrimo_Z();
-            default: return nullptr;
-        }
     }
 };
 
@@ -317,16 +236,17 @@ public:
             cout << ": coin already taken" << "\n";
         }
     }
+
     void SpawnNewShape(Tetrimino*& currT, Board& board , int& x, int& y) {
         currT = TetriminoFactory::createRandom();
         x= BOARD_WIDTH / 2 -1;
         y = 0;
         currT->updCoordinates(x, y);
-        //currT->draw(board);
     }
     void reset();
     void pause();
     void resume();
+
     bool IsSpawn(Tetrimino* tet) {
         if (tet == nullptr) {
             return false;
@@ -475,19 +395,30 @@ public:
     int getScore() {
         return _score;
     }
-    //void reset()
-    //{
-    //    resetBoard();
-    //    //actionsNumber = 0;
-    //    //currentPlayer = Player::X;
-    //    //winner = Player::None;
-    //}
+    bool isGameOver(Board& board, Tetrimino& tet, int& x, int& y) const
+    {
+        size_t n = tet.getMatrix().size();;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (tet.getMatrix()[i][j] == 1)
+                {
+                    int boardX = x + j;
+                    int boardY = y + i;
 
-    //bool isGameOver() const
-    //{
-    //    return true;
-    //    //return winner != Player::None || actionsNumber >= 9;
-    //}
+                    if (boardX >= 0 && boardX < BOARD_WIDTH && boardY < BOARD_HEIGHT && boardY >= 0) {
+                        if (board.getSym(boardX, boardY) == '#') {
+                            return true;
+                        }
+                    }
+
+                    if (boardY < 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }    
 };
 
 class Renderer {
@@ -528,18 +459,14 @@ private:
                         dropTime = sf::Time::Zero;
                     }
                     else if (keyPressed->code == sf::Keyboard::Key::Up) {
-                        currentTet->rotate();
+                        board.clearInner();
+                        currentTet->rotate(board);
+                        currentTet->draw(board);
                     }
                 }
             }
 
         }
-    }
-
-    void handleMouseClick(TetrisGame& game, int mouseX, int mouseY)
-    {
-        int row = mouseY / cellSize;
-        int col = mouseX / cellSize;
     }
 
     void render(const TetrisGame& game)
@@ -557,9 +484,10 @@ private:
                 }
                 else if (sym != ' ') {
                     cell.setFillColor(sf::Color::Red);
+                    
                 }
                 else {
-                    cell.setFillColor(sf::Color(30, 30, 30));
+                    cell.setFillColor(sf::Color(30,30,30));
                 }
                 window.draw(cell);
             }
@@ -574,9 +502,16 @@ public:
         windowHeight(BOARD_HEIGHT* cellSize),
         window(sf::VideoMode({ static_cast<unsigned int>(windowWidth), static_cast<unsigned int>(windowHeight) }), "Tic-Tac-Toe"),
         font(),
-        fontLoaded(font.openFromFile("C:\\Windows\\Fonts\\arial.ttf")) // Змініть шлях до шрифту за потреби
+        fontLoaded(font.openFromFile("C:\\Windows\\Fonts\\arial.ttf"))
     {
         window.setFramerateLimit(60);
+    }
+
+    void GemeOver(Board& board, Tetrimino& tet, TetrisGame& game, int& x, int& y) {
+        if (game.isGameOver(board, tet, x, y)) {
+            window.setTitle("Game is over");
+            window.close();
+        }
     }
 
     void run(Board& board,TetrisGame& game , Tetrimino*& activeTet, int& x, int& y)
@@ -592,6 +527,11 @@ public:
             if (activeTet == nullptr) {
                 game.SpawnNewShape(activeTet, board, x, y);
                 dropTime = sf::Time::Zero;
+                if (activeTet != nullptr) {
+                    GemeOver(board, *activeTet, game, x, y);
+                }
+
+            
             }
             processEvents(game, activeTet, x, y, dropTime);
 
@@ -599,9 +539,12 @@ public:
                 game.SoftDrop(board, activeTet, x, y);
                 dropTime = sf::Time::Zero;
             }
-
+            if (activeTet != nullptr) {
+                GemeOver(board, *activeTet,game, x, y);
+            }
             window.clear();
             render(game);
+            //window.display();
         }
     }
 };
@@ -612,7 +555,7 @@ int main()
     srand(static_cast<unsigned int>(time(0)));
    
     Board board;
-    board.initBorder();
+    board.initBorder(); 
 
     TetrisGame game(board);
     Tetrimino* activeTermino = nullptr;

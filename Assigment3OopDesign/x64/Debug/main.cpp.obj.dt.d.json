@@ -262,7 +262,11 @@
             "c:\\2курспрограмнаінженеріяkse\\cs440ooppracticesanddesignelements\\sfml-3.1.0-windows-vc17-64-bit\\sfml-3.1.0\\include\\sfml\\system\\sleep.hpp",
             "c:\\2курспрограмнаінженеріяkse\\cs440ooppracticesanddesignelements\\sfml-3.1.0-windows-vc17-64-bit\\sfml-3.1.0\\include\\sfml\\system\\timeoutwithpredicate.hpp",
             "c:\\2курспрограмнаінженеріяkse\\cs440ooppracticesanddesignelements\\sfml-3.1.0-windows-vc17-64-bit\\sfml-3.1.0\\include\\sfml\\system\\version.hpp",
-            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iostream"
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iostream",
+            "c:\\2курспрограмнаінженеріяkse\\cs440ooppracticesanddesignelements\\assigment3oopdesign\\assigment3oopdesign\\colorcode.h",
+            "c:\\2курспрограмнаінженеріяkse\\cs440ooppracticesanddesignelements\\assigment3oopdesign\\assigment3oopdesign\\board.h",
+            "c:\\2курспрограмнаінженеріяkse\\cs440ooppracticesanddesignelements\\assigment3oopdesign\\assigment3oopdesign\\tetrimino.h",
+            "c:\\2курспрограмнаінженеріяkse\\cs440ooppracticesanddesignelements\\assigment3oopdesign\\assigment3oopdesign\\tetriminofactory.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []
