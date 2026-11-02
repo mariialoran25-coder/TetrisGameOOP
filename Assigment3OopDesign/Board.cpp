@@ -76,18 +76,23 @@ bool Board::isFullLine(int& y) const
     return true;
 }
 
-void Board::DelFullLine() {
+int Board::DelFullLine() {
+    int linesCleared = 0;
     for (int i = BOARD_HEIGHT - 1; i > 0; --i) {
         if (isFullLine(i)) {
             for (int row = i; row > 1; --row)
                 for (int j = 1; j < BOARD_WIDTH - 1; ++j) {
                     grid[row][j] = grid[row - 1][j];
+                    
                 }
+                
             for (int j = 1; j < BOARD_WIDTH - 1; ++j) {
                 grid[1][j].symbol = ' ';
                 grid[1][j].color = "";
             }
+            linesCleared++;
             --i;
         }
     }
+    return linesCleared;
 }

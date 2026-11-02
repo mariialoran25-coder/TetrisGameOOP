@@ -4,6 +4,7 @@
 #include "string"
 #include "ColorCode.h"
 
+
 using namespace std;
 
 inline const int BOARD_WIDTH = 21;
@@ -26,5 +27,5 @@ public:
     void print();
     char getSym(int x, int y) const;
     bool isFullLine(int& y) const;
-    void DelFullLine();
+    int DelFullLine();
 };

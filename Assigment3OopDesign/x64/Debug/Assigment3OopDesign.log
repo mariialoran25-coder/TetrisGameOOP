@@ -1,3 +1,20 @@
 ﻿  Scanning sources for module dependencies...
+  Tetrimino.h
+  Compiling...
+  Tetrimino.h
+  Board.cpp
+  ColorCode.cpp
+  Renderer.cpp
+  Tetrimino.cpp
+  TetriminoFactory.cpp
+  Tetrimo_Box.cpp
+  Tetrimo_J.cpp
+  Tetrimo_L.cpp
+  Tetrimo_Palka.cpp
+  Tetrimo_S.cpp
+  Tetrimo_T.cpp
+  Tetrimo_Z.cpp
+  TetrisGame.cpp
+  Generating Code...
   main.cpp
   Assigment3OopDesign.vcxproj -> C:\2курсПрограмнаІнженеріяKSE\CS440OopPracticesAndDesignElements\Assigment3OopDesign\x64\Debug\Assigment3OopDesign.exe
