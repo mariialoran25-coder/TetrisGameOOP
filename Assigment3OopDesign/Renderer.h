@@ -22,11 +22,11 @@ private:
     sf::Font font;
     bool fontLoaded;
 
-    void processEvents(TetrisGame& game, Tetrimino*& currentTet, int& x, int& y, sf::Time& dropTime);
+    void processEvents(TetrisGame& game, sf::Time& dropTime);
     void render(const TetrisGame& game);
 
 public:
     Renderer();
-    void GemeOver(Board& board, Tetrimino& tet, TetrisGame& game, int& x, int& y);
-    void run(Board& board, TetrisGame& game, Tetrimino*& activeTet, int& x, int& y);
+    void GemeOver(Board& board,TetrisGame& game);
+    void run(Board& board, TetrisGame& game);
 };

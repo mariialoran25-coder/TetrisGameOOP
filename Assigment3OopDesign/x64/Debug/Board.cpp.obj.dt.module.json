@@ -5,8 +5,8 @@
         {
             "primary-output": "x64\\Debug\\Board.obj",
             "outputs": [
-                "x64\\Debug\\Board.h.obj.dt.module.json",
-                "x64\\Debug\\Board.h.obj.dt.d.json"
+                "x64\\Debug\\Board.cpp.obj.dt.module.json",
+                "x64\\Debug\\Board.cpp.obj.dt.d.json"
             ],
             "requires": []
         }

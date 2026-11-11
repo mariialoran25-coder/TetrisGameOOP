@@ -5,5 +5,5 @@ Tetrimo_S::Tetrimo_S() {
         {1,1,0},
         {0,0,0}
     };
-    color = "green";
+    color = sf::Color::Green;
 }

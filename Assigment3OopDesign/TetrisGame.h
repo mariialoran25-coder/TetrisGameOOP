@@ -9,33 +9,50 @@
 class TetrisGame {
 private:
     string State;
-    int _score = 0;
-    bool isGameOver() const;
-    const int gridSize = 15;
     Board& board_;
     std::vector<int> topScores;
-    void resetBoard();
+    sf::Time lockTimer_ = sf::Time::Zero;
+
+    int _score = 0;
+    const int gridSize = 15;
+    bool gameOver_ = false;
+
+    std::unique_ptr<Tetrimino> current_;
+    int currentX_ = 0;
+    int currentY_ = 0;
+
+    bool canMoveRight( int coordX, int  coordY)const;
+    bool canMoveLeft( int coordX, int  coordY)const;
+    bool canSoftDrop( int coordX, int  coordY)const;
+
+
 public:
     TetrisGame(Board& board);
     Board& getBoard();
-    void scoreLines(int linesCount);
-    void saveScore();
+    void reset();
+
+
     const std::vector<int>& getTopScores() const;
-    //void collect(Point& coin);
-    void SpawnNewShape(Tetrimino*& currT, Board& board, int& x, int& y);
-    bool IsSpawn(Tetrimino* tet);
+    void SpawnNewShape();
+    bool hasActiveShape() const;
+    bool IsSpawn(const Tetrimino* tet);
 
-    bool canMoveLeft(Board& board, Tetrimino& tet, int coordX, int  coordY);
-    void landTetrimino(Board& board, Tetrimino& tet, int& x, int& y);
-    void moveLeft(Board& board, Tetrimino*& tet, int& x, int& y);
+   
+    void landTetrimino();
+    void moveLeft();
+    void moveRight();
+    void SoftDrop( sf::Time dt);
+    void hardDrop();
+    void rotate();
 
-    bool canMoveRight(Board& board, Tetrimino& tet, int coordX, int  coordY);
-    void moveRight(Board& board, Tetrimino*& tet, int& x, int& y);
-    bool canSoftDrop(Board& board, Tetrimino& tet, int coordX, int  coordY);
-    void SoftDrop(Board& board, Tetrimino*& tet, int& x, int& y);
-    void hardDrop(Board& board, Tetrimino*& tet, int& x, int& y);
 
     int getScore() const;
     void addScore(int value);
-    bool isGameOver(Board& board, Tetrimino& tet, int& x, int& y) const;
+
+    void update(sf::Time dt);
+    bool isGameOver() const;
+    void saveScores(const std::string& path) const;
+    void loadScores(const std::string& path);
+    void saveScore();
+    void scoreLines(int linesCount);
 };

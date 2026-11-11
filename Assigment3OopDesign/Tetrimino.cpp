@@ -15,19 +15,30 @@ void Tetrimino::draw(Board& board) {
             {
                 int boardX = coordX + j;
                 int boardY = coordY + i;
-                board.setSym(boardX, boardY, '*', color);
+                board.setSym(boardX, boardY, '*', getColor());
             }
         }
     }
 }
+
+
+std::vector<std::vector<int>> Tetrimino::getMatrix() const {
+    return tetrimo;
+}
+
+
+sf::Color Tetrimino::getColor() const {
+    return  color;
+}
+
+
 
 bool Tetrimino::canRotate(Board& board) {
     std::vector<std::vector<int>> temp = tetrimo;
     size_t n = tetrimo.size();
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
-
-            temp[i][j] = tetrimo[j][n - 1 - i];
+            temp[j][n - 1 - i] = tetrimo[i][j];
         }
     }
     for (int i = 0; i < n; ++i) {
@@ -64,10 +75,3 @@ void Tetrimino::rotate(Board& board) {
 //{ 1,0,0,0 }, { 0,0,0,0 },
 //{ 1,0,0,0 }, { 0,0,0,0 },
 //{ 1,0,0,0 }, { 0,0,0,0 },
-
-std::vector<std::vector<int>> Tetrimino::getMatrix() const {
-    return tetrimo;
-}
-std::string Tetrimino::getColor() const {
-    return  color;
-}

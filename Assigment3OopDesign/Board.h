@@ -2,17 +2,17 @@
 #include <vector> 
 #include <iostream>
 #include "string"
-#include "ColorCode.h"
+#include <SFML/Graphics.hpp>
 
 
 using namespace std;
 
-inline const int BOARD_WIDTH = 21;
-inline const int BOARD_HEIGHT = 29;
+inline const int BOARD_WIDTH = 21; //21
+inline const int BOARD_HEIGHT = 29;   //29
 
 struct forBoard {
     char symbol = ' ';
-    std::string color = "";
+    sf::Color color;
 };
 
 
@@ -21,11 +21,11 @@ private:
     std::vector<std::vector<forBoard>> grid;
 public:
     Board();
-    void setSym(int x, int y, char symbol, const std::string& color);
+    void setSym(int x, int y, char symbol, sf::Color color);
     void initBorder();
     void clearInner();
-    void print();
     char getSym(int x, int y) const;
     bool isFullLine(int& y) const;
     int DelFullLine();
+    sf::Color getColor(int x, int y) const;
 };

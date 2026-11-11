@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-void Renderer::processEvents(TetrisGame& game, Tetrimino*& currentTet, int& x, int& y, sf::Time& dropTime)
+void Renderer::processEvents(TetrisGame& game, sf::Time& dropTime)
 {
     while (const std::optional<sf::Event> event = window.pollEvent())
     {
@@ -10,7 +10,6 @@ void Renderer::processEvents(TetrisGame& game, Tetrimino*& currentTet, int& x, i
         }
         else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
         {
-            Board& board = game.getBoard();
             if (curr_state == stateInstructuion || curr_state == stateStatus) {
                 if (keyPressed->code == sf::Keyboard::Key::Escape || keyPressed->code == sf::Keyboard::Key::Enter) {
                     curr_state = stateMenu;
@@ -20,33 +19,33 @@ void Renderer::processEvents(TetrisGame& game, Tetrimino*& currentTet, int& x, i
                 if (keyPressed->code == sf::Keyboard::Key::Escape) {
                     curr_state = stateMenu;
                 }
-                else if (currentTet != nullptr) {
+                else if (game.hasActiveShape()) {
                     if (keyPressed->code == sf::Keyboard::Key::Left)
                     {
-                        game.moveLeft(board, currentTet, x, y);
+                        game.moveLeft();
                     }
                     else if (keyPressed->code == sf::Keyboard::Key::Right) {
-                        game.moveRight(board, currentTet, x, y);
+                        game.moveRight();
                     }
                     else if (keyPressed->code == sf::Keyboard::Key::Down) {
-                        game.SoftDrop(board, currentTet, x, y);
+                        game.SoftDrop(dropTime);
                         dropTime = sf::Time::Zero;
                     }
                     else if (keyPressed->code == sf::Keyboard::Key::Space) {
-                        game.hardDrop(board, currentTet, x, y);
+                        game.hardDrop();
                         dropTime = sf::Time::Zero;
                     }
                     else if (keyPressed->code == sf::Keyboard::Key::Up) {
+                        Board& board = game.getBoard();
                         board.clearInner();
-                        currentTet->rotate(board);
-                        currentTet->draw(board);
+                        game.rotate();
                     }
                 }
             }
         }
         else if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (mousePressed->button == sf::Mouse::Button::Left) {
-                int mouseX = mousePressed->position.x;
+                int mouseX = mousePressed->position.x;  
                 int mouseY = mousePressed->position.y;
 
                 if (curr_state == stateInstructuion) {
@@ -58,11 +57,8 @@ void Renderer::processEvents(TetrisGame& game, Tetrimino*& currentTet, int& x, i
                         curr_state = stateInstructuion;
                     }
                     else if (mouseX >= 220 && mouseX <= 420 && mouseY >= 250 && mouseY <= 330) {
-                        Board& board = game.getBoard();
-                        board.initBorder();
-                        delete currentTet;
-                        currentTet = nullptr;
-                        game.SpawnNewShape(currentTet, board, x, y);
+                        game.reset();
+                        game.SpawnNewShape();
                         dropTime = sf::Time::Zero;
                         curr_state = stateGame;
                     }
@@ -70,7 +66,6 @@ void Renderer::processEvents(TetrisGame& game, Tetrimino*& currentTet, int& x, i
                         curr_state = stateGame;
                     }
                     else if (mouseX >= 220 && mouseX <= 420 && mouseY >= 550 && mouseY <= 630) {
-                        game.saveScore();
                         curr_state = stateStatus;
                     }
                     else if (mouseX >= 220 && mouseX <= 420 && mouseY >= 700 && mouseY <= 750) {
@@ -84,6 +79,9 @@ void Renderer::processEvents(TetrisGame& game, Tetrimino*& currentTet, int& x, i
 
 void Renderer::render(const TetrisGame& game)
 {
+    window.clear(sf::Color(30,30,30));
+    Board& board = const_cast<TetrisGame&>(game).getBoard();
+
     if (Renderer::curr_state == stateMenu) {
         window.clear(sf::Color::White);
         sf::RectangleShape instruction(sf::Vector2f(200.f, 80.f));
@@ -193,45 +191,27 @@ void Renderer::render(const TetrisGame& game)
         }
     }
     else {
-        window.clear();
-        Board& board = const_cast<TetrisGame&>(game).getBoard();
-
-        sf::Text scoreText(font);
-        if (fontLoaded) {
-            scoreText.setString("Score: " + std::to_string(game.getScore()));
-            scoreText.setCharacterSize(20);
-            scoreText.setFillColor(sf::Color::White);
-            scoreText.setPosition({ static_cast<float>(BOARD_WIDTH * cellSize + 20), 50.f });
-        }
-
         for (int i = 0; i < BOARD_HEIGHT; ++i) {
             for (int j = 0; j < BOARD_WIDTH; ++j) {
                 char sym = board.getSym(j, i);
                 sf::RectangleShape cell(sf::Vector2f(static_cast<float>(cellSize - 1), static_cast<float>(cellSize - 1)));
                 cell.setPosition(sf::Vector2f(static_cast<float>(j * cellSize), static_cast<float>(i * cellSize)));
-
-                if (fontLoaded) {
-                    sf::Text scoreText(font);
-                    scoreText.setString("Score: " + std::to_string(game.getScore()));
-                    scoreText.setCharacterSize(20);
-                    scoreText.setFillColor(sf::Color::White);
-                    scoreText.setPosition({ static_cast<float>(BOARD_WIDTH * cellSize + 20), 50.f });
-                    window.draw(scoreText);
-                }
+                
+                sf::Color colorsShape = board.getColor(j, i);
+                cell.setFillColor(colorsShape);
 
                 if (sym == '-' || sym == '|') {
-                    cell.setFillColor(sf::Color::Blue);
-                }
-                else if (sym != ' ') {
-                    cell.setFillColor(sf::Color::Red);
-                }
-                else {
-                    cell.setFillColor(sf::Color(30, 30, 30));
+                    cell.setFillColor(sf::Color(255,192,203));
                 }
                 window.draw(cell);
             }
         }
         if (fontLoaded) {
+            sf::Text scoreText(font);
+            scoreText.setString("Score: " + std::to_string(game.getScore()));
+            scoreText.setCharacterSize(20);
+            scoreText.setFillColor(sf::Color::White);
+            scoreText.setPosition({ static_cast<float>(BOARD_WIDTH * cellSize + 20), 50.f });
             window.draw(scoreText);
         }
     }
@@ -247,25 +227,30 @@ Renderer::Renderer()
     fontLoaded(font.openFromFile("C:\\Windows\\Fonts\\arial.ttf"))
 {
     window.setFramerateLimit(60);
-}
-
-void Renderer::GemeOver(Board& board, Tetrimino& tet, TetrisGame& game, int& x, int& y) {
-    if (game.isGameOver(board, tet, x, y)) {
-        game.saveScore();
-        window.setTitle("Game is over");
-        window.close();
+    if (!fontLoaded) {
+        std::cout << "Font not loaded" << "/n";
     }
 }
 
-void Renderer::run(Board& board, TetrisGame& game, Tetrimino*& activeTet, int& x, int& y)
+void Renderer::GemeOver(Board& board, TetrisGame& game) {
+    if (game.isGameOver()) {
+        game.saveScore();
+        window.setTitle("Game is over");
+        
+        Renderer::curr_state = stateMenu;
+    }
+}
+
+void Renderer::run(Board& board, TetrisGame& game)
 {
     sf::Clock clock;
     sf::Time dropTime = sf::Time::Zero;
     sf::Time dropInterval = sf::milliseconds(500);
     while (window.isOpen())
     {
-        processEvents(game, activeTet, x, y, dropTime);
-        if (curr_state == stateMenu) {
+
+        processEvents(game, dropTime);
+        if (curr_state != stateGame) {
             clock.restart();
             dropTime = sf::Time::Zero;
         }
@@ -273,24 +258,25 @@ void Renderer::run(Board& board, TetrisGame& game, Tetrimino*& activeTet, int& x
             sf::Time timeLeft = clock.restart();
             dropTime += timeLeft;
 
-            if (activeTet == nullptr) {
-                game.SpawnNewShape(activeTet, board, x, y);
+
+            if (!game.hasActiveShape()) {
+                game.SpawnNewShape();
                 dropTime = sf::Time::Zero;
-                if (activeTet != nullptr) {
-                    GemeOver(board, *activeTet, game, x, y);
+                if (game.isGameOver()) {
+                    GemeOver(board, game);
                 }
             }
 
             if (dropTime >= dropInterval) {
-                game.SoftDrop(board, activeTet, x, y);
+                game.SoftDrop(dropInterval);
                 int cleared = board.DelFullLine();
                 if (cleared > 0) {
                     game.scoreLines(cleared);
                 }
                 dropTime = sf::Time::Zero;
             }
-            if (activeTet != nullptr) {
-                GemeOver(board, *activeTet, game, x, y);
+            if (game.hasActiveShape()) {
+                GemeOver(board, game);
             }
         }
         render(game);

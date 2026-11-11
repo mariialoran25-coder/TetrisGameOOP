@@ -27,9 +27,6 @@
     <ClCompile Include="Board.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ColorCode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tetrimo_Palka.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,9 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ColorCode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tetrimo_Palka.h">

@@ -7,5 +7,5 @@ Tetrimo_Palka::Tetrimo_Palka() {
         {1,0,0,0},
         {1,0,0,0},
     };
-    color = "cyan";
+    color = sf::Color::Cyan;
 }

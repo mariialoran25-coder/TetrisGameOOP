@@ -5,7 +5,6 @@
 #include <iostream>
 #include <ctime>
 
-#include "ColorCode.h"
 #include "Board.h"
 #include "Tetrimino.h"
 #include "TetriminoFactory.h"
@@ -13,27 +12,6 @@
 #include "Renderer.h"
 
 using namespace std;
-
-//
-//
-//class Point {
-//private:
-//    int _value;
-//    bool taken = false;
-//public:
-//    Point(int value) : _value(value) {}
-//    int take() {
-//        if (!taken) {
-//            taken = true;
-//            return _value;
-//        }
-//        return 0;
-//    }
-//    bool canTake() {
-//    }
-//};
-
-
 
 int main()
 {
@@ -43,16 +21,17 @@ int main()
     board.initBorder(); 
 
     TetrisGame game(board);
-    Tetrimino* activeTermino = nullptr;
-    
-    int x = 0;
-    int y = 0;
-    game.SpawnNewShape(activeTermino, board,x,y);
+    //std::string myFilePath = R"(C:\2курсПрограмнаІнженеріяKSE\CS440OopPracticesAndDesignElements\Assigment3OopDesign\scores.txt)";
+    game.loadScores("scores.txt");
+
+    if (!game.hasActiveShape()) {
+        game.SpawnNewShape();
+    }
 
     Renderer render;
-    render.run(board,game, activeTermino,x,y);
-
-    delete activeTermino;
+    
+    render.run(board,game);
+    //game.saveScores("scores.txt");
  
     return 0;
 }

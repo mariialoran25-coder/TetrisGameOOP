@@ -5,5 +5,5 @@ Tetrimo_L::Tetrimo_L() {
         {1,0,0},
         {1,1,0}
     };
-    color = "orange";
+    color = sf::Color(255, 165, 0);
 }

@@ -5,5 +5,5 @@ Tetrimo_J::Tetrimo_J() {
         {0,1,0},
         {1,1,0}
     };
-    color = "blue";
+    color = sf::Color::Blue;
 }

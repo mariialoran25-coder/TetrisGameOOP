@@ -4,5 +4,5 @@ Tetrimo_Box::Tetrimo_Box() {
         {1,1},
         {1,1}
     };
-    color = "yellow";
+    color = sf::Color::Yellow;
 }

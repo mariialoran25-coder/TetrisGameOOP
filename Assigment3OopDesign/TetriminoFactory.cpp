@@ -8,6 +8,7 @@
 #include "Tetrimo_T.h"
 #include "Tetrimo_Z.h"
 
+
 Tetrimino* TetriminoFactory::createRandom() {
     int type = rand() % 7;
     switch (type) {
