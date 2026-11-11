@@ -48,10 +48,6 @@ void Renderer::processEvents(TetrisGame& game, sf::Time& dropTime)
                 int mouseX = mousePressed->position.x;  
                 int mouseY = mousePressed->position.y;
 
-                if (curr_state == stateInstructuion) {
-                    curr_state = stateMenu;
-                }
-
                 if (curr_state == stateMenu) {
                     if (mouseX >= 220 && mouseX <= 420 && mouseY >= 100 && mouseY <= 180) {
                         curr_state = stateInstructuion;
