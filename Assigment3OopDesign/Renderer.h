@@ -23,7 +23,7 @@ private:
     bool fontLoaded;
 
     void processEvents(TetrisGame& game, sf::Time& dropTime);
-    void render(const TetrisGame& game);
+    void render( const TetrisGame& game);
 
 public:
     Renderer();

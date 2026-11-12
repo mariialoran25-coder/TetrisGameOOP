@@ -25,12 +25,15 @@ private:
     bool canMoveLeft( int coordX, int  coordY)const;
     bool canSoftDrop( int coordX, int  coordY)const;
 
-
 public:
     TetrisGame(Board& board);
     Board& getBoard();
     void reset();
 
+    int getShadowY() const;
+    int getCurrX()const;
+
+    std::vector<std::vector<int>> getCurrMatrix() const;
 
     const std::vector<int>& getTopScores() const;
     void SpawnNewShape();
@@ -51,8 +54,11 @@ public:
 
     void update(sf::Time dt);
     bool isGameOver() const;
-    void saveScores(const std::string& path) const;
+    void saveFileScores(const std::string& path) const;
     void loadScores(const std::string& path);
     void saveScore();
     void scoreLines(int linesCount);
+
+
+   
 };

@@ -6,12 +6,12 @@ TetrisGame::TetrisGame(Board& board) :board_(board) {
     reset();
 
 }
-
 void TetrisGame::reset()
 {
     _score = 0; 
     board_.initBorder();
     current_ = nullptr;
+    gameOver_ = false;
 }
 
 Board& TetrisGame::getBoard() {
@@ -19,29 +19,11 @@ Board& TetrisGame::getBoard() {
 }
 
 
-void TetrisGame::scoreLines(int linesCount) {
-    if (linesCount <= 0) return;
-    int points = 0;
-    if (linesCount == 1) points = 100;
-    else if (linesCount == 2) points = 300;
-    else if (linesCount == 3) points = 500;
-    else if (linesCount == 4) points = 800;
-    _score += points;
 
+int TetrisGame::getCurrX() const {
+    return currentX_;
 }
-void TetrisGame::saveScore() {
-    if (_score > 0) {
-        topScores.push_back(_score);
-        std::sort(topScores.rbegin(), topScores.rend());
-        if (topScores.size() > 5) {
-            topScores.resize(5);
-        }
-        saveScores("scores.txt");
-    }
-}
-const std::vector<int>& TetrisGame::getTopScores() const {
-    return topScores;
-}
+
 
 void TetrisGame::SpawnNewShape() {
     current_ = std::unique_ptr<Tetrimino>(TetriminoFactory::createRandom());
@@ -83,6 +65,11 @@ void TetrisGame::update(sf::Time dt) {
     if (isGameOver()) {
         gameOver_ = true;
     }
+}
+
+std::vector<std::vector<int>> TetrisGame::getCurrMatrix() const {
+    if (current_) return current_->getMatrix();
+    return {};
 }
 
 
@@ -216,6 +203,7 @@ void TetrisGame::hardDrop() {
 
 void TetrisGame::landTetrimino() {
     const std::vector<std::vector<int>>& matrix = current_->getMatrix();
+
     size_t n = matrix.size();
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
@@ -265,8 +253,43 @@ bool TetrisGame::isGameOver() const
     return false;
 }
 
+void TetrisGame::rotate() {
+    board_.clearInner();
+    current_->rotate(board_);
+    current_->draw(board_);
+}
 
-void TetrisGame::saveScores(const std::string& path) const {
+
+
+
+
+void TetrisGame::scoreLines(int linesCount) {
+    if (linesCount <= 0) return;
+    int points = 0;
+    if (linesCount == 1) points = 100;
+    else if (linesCount == 2) points = 300;
+    else if (linesCount == 3) points = 500;
+    else if (linesCount == 4) points = 800;
+    else points = linesCount * 200;
+    _score += points;
+
+}
+void TetrisGame::saveScore() {
+    if (_score > 0 ) {
+        topScores.push_back(_score);
+        std::sort(topScores.rbegin(), topScores.rend());
+        if (topScores.size() > 5) {
+            topScores.resize(5);
+        }
+        saveFileScores("scores.txt");
+    }
+}
+const std::vector<int>& TetrisGame::getTopScores() const {
+    return topScores;
+}
+
+
+void TetrisGame::saveFileScores(const std::string& path) const {
     std::ofstream f(path);
     if (f.is_open()) {
         for (int s : topScores) {
@@ -283,13 +306,48 @@ void TetrisGame::loadScores(const std::string& path) {
         while (f >> s) {
             topScores.push_back(s);
         }
+        std::sort(topScores.rbegin(), topScores.rend());
+        if (topScores.size() > 5) {
+            topScores.resize(5);
+        }
     }
 }
 
 
+int TetrisGame::getShadowY() const {
+    if (!current_) return currentY_;
 
-void TetrisGame::rotate() {
-    board_.clearInner();
-    current_->rotate(board_);
-    current_->draw(board_);
+    int shadowY = currentY_;
+    const auto& matrix = current_->getMatrix();
+    size_t n = matrix.size();
+
+
+
+    while (true) {
+        bool canMoveDown = true;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (matrix[i][j] == 1)
+                {
+                    int boardX = currentX_ + j;
+                    int boardY = shadowY + i + 1;
+                    if (boardY >= BOARD_HEIGHT || boardX< 0  || boardX >= BOARD_WIDTH)
+                    {
+                        canMoveDown = false;
+                        break;
+                    }
+                    char sym = board_.getSym(boardX, boardY);
+                    if (sym == '#' || sym == '-') {
+                        canMoveDown = false;
+                        break;
+                    }
+                }
+            }
+            if (!canMoveDown) break;
+        }
+        if (!canMoveDown) break;
+        shadowY++;
+    }
+    return shadowY;
+    
 }

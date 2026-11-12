@@ -22,7 +22,7 @@ int main()
 
     TetrisGame game(board);
     //std::string myFilePath = R"(C:\2курсПрограмнаІнженеріяKSE\CS440OopPracticesAndDesignElements\Assigment3OopDesign\scores.txt)";
-    game.loadScores("scores.txt");
+    //game.loadScores("scores.txt"); // if need to save preveosly result 
 
     if (!game.hasActiveShape()) {
         game.SpawnNewShape();
@@ -31,7 +31,6 @@ int main()
     Renderer render;
     
     render.run(board,game);
-    //game.saveScores("scores.txt");
  
     return 0;
 }

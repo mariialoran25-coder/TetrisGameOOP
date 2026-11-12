@@ -75,11 +75,11 @@ void Renderer::processEvents(TetrisGame& game, sf::Time& dropTime)
 
 void Renderer::render(const TetrisGame& game)
 {
-    window.clear(sf::Color(30,30,30));
+    window.clear(sf::Color(30, 30, 30));
     Board& board = const_cast<TetrisGame&>(game).getBoard();
 
     if (Renderer::curr_state == stateMenu) {
-        window.clear(sf::Color::White);
+        window.clear(sf::Color(143, 0, 255));
         sf::RectangleShape instruction(sf::Vector2f(200.f, 80.f));
         sf::RectangleShape start(sf::Vector2f(200.f, 80.f));
         sf::RectangleShape continuee(sf::Vector2f(200.f, 80.f));
@@ -87,34 +87,43 @@ void Renderer::render(const TetrisGame& game)
         sf::RectangleShape exit(sf::Vector2f(200.f, 50.f));
 
         instruction.setPosition({ 220.f, 100.f });
-        instruction.setFillColor(sf::Color::Cyan);
-        instruction.setOutlineColor(sf::Color::Red);
-        instruction.setOutlineThickness(5.f);
+        instruction.setFillColor(sf::Color(224, 255, 255));
+        instruction.setOutlineColor(sf::Color(0, 0, 200));
+        instruction.setOutlineThickness(3.f);
         window.draw(instruction);
 
         start.setPosition({ 220.f, 250.f });
-        start.setFillColor(sf::Color::Cyan);
-        start.setOutlineColor(sf::Color::Red);
-        start.setOutlineThickness(5.f);
+        start.setFillColor(sf::Color(224, 255, 255));
+        start.setOutlineColor(sf::Color(0, 0, 200));
+        start.setOutlineThickness(3.f);
         window.draw(start);
 
         continuee.setPosition({ 220.f, 400.f });
-        continuee.setFillColor(sf::Color::Cyan);
-        continuee.setOutlineColor(sf::Color::Red);
-        continuee.setOutlineThickness(5.f);
+        continuee.setFillColor(sf::Color(224, 255, 255));
+        continuee.setOutlineColor(sf::Color(0, 0, 200));
+        continuee.setOutlineThickness(3.f);
         window.draw(continuee);
 
         status.setPosition({ 220.f, 550.f });
-        status.setFillColor(sf::Color::Cyan);
-        status.setOutlineColor(sf::Color::Red);
-        status.setOutlineThickness(5.f);
+        status.setFillColor(sf::Color(224, 255, 255));
+        status.setOutlineColor(sf::Color(0, 0, 200));
+        status.setOutlineThickness(3.f);
         window.draw(status);
 
         exit.setPosition({ 220.f, 700.f });
-        exit.setFillColor(sf::Color::Cyan);
-        exit.setOutlineColor(sf::Color::Red);
-        exit.setOutlineThickness(5.f);
+        exit.setFillColor(sf::Color(224, 255, 255));
+        exit.setOutlineColor(sf::Color(0, 0, 200));
+        exit.setOutlineThickness(3.f);
         window.draw(exit);
+
+        sf::Text titleText(font);
+        titleText.setString("TETRIS");
+        titleText.setCharacterSize(50);
+        titleText.setFillColor(sf::Color(0, 0, 128));
+        titleText.setPosition({ 235.f, 20.f });
+        window.draw(titleText);
+
+
 
         if (fontLoaded) {
             sf::Text text1(font), text2(font), text3(font), text4(font), text5(font);
@@ -136,18 +145,18 @@ void Renderer::render(const TetrisGame& game)
         }
     }
     else if (curr_state == stateInstructuion) {
-        window.clear(sf::Color::White);
+        window.clear(sf::Color(153, 153, 255));
         if (fontLoaded) {
             sf::Text textinstr(font);
-            textinstr.setString("Instructions:\n\nLeft/Right - arrows\nUp - Rotate\nDown - Soft Drop\nSpace - Hard Drop\n\nPress ENTER or ESC to go back");
-            textinstr.setCharacterSize(18);
+            textinstr.setString("Instructions:\n\nTo move Left/Right side shape - use arrow left/right on keyboard \nTo Rotate the shape - use arrow up on keyboard\nTo speed up the tetrimino  - use arrow Down on keyboard\nTo drop the tetrimino - use Space on keyboard\n\nPress ENTER or ESC to go back");
+            textinstr.setCharacterSize(19);
             textinstr.setFillColor(sf::Color::Black);
-            textinstr.setPosition({ 100.f, 200.f });
+            textinstr.setPosition({ 50.f, 300.f });
             window.draw(textinstr);
         }
     }
     else if (curr_state == stateStatus) {
-        window.clear(sf::Color::White);
+        window.clear(sf::Color(153, 153, 255));
         if (fontLoaded) {
             sf::Text title(font);
             title.setString("TOP 5 SCORES");
@@ -192,16 +201,49 @@ void Renderer::render(const TetrisGame& game)
                 char sym = board.getSym(j, i);
                 sf::RectangleShape cell(sf::Vector2f(static_cast<float>(cellSize - 1), static_cast<float>(cellSize - 1)));
                 cell.setPosition(sf::Vector2f(static_cast<float>(j * cellSize), static_cast<float>(i * cellSize)));
-                
+
+                cell.setOutlineColor(sf::Color(50, 50, 50));
+                cell.setOutlineThickness(1.f);
+
+
                 sf::Color colorsShape = board.getColor(j, i);
                 cell.setFillColor(colorsShape);
 
                 if (sym == '-' || sym == '|') {
-                    cell.setFillColor(sf::Color(255,192,203));
+                    cell.setFillColor(sf::Color(76, 0, 153));
                 }
                 window.draw(cell);
             }
         }
+        if (game.hasActiveShape()) {
+            int shadowX = game.getCurrX();
+            int shadowY = game.getShadowY();
+            const auto& matrix = game.getCurrMatrix();
+
+            size_t n = matrix.size();
+            
+
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < n; ++j) {
+                    if (matrix[i][j] == 1)
+                    {
+                        int boardX = shadowX + j;
+                        int boardY = shadowY + i ;
+                        if (boardX >= 0 && boardX < BOARD_WIDTH && boardY < BOARD_HEIGHT && boardY >= 0) {
+                            sf::RectangleShape shadowCell(sf::Vector2f(static_cast<float>(cellSize-1), static_cast<float>(cellSize-1)));
+                            shadowCell.setPosition(sf::Vector2f(static_cast<float>(boardX* cellSize), static_cast<float>(boardY* cellSize)));
+
+                            shadowCell.setFillColor(sf::Color::Transparent);
+                            shadowCell.setOutlineColor(sf::Color(255, 255, 255));
+                            shadowCell.setOutlineThickness(1.5f);
+                            window.draw(shadowCell);
+
+                        }
+                    }
+                }
+            }
+        }
+
         if (fontLoaded) {
             sf::Text scoreText(font);
             scoreText.setString("Score: " + std::to_string(game.getScore()));
@@ -210,13 +252,16 @@ void Renderer::render(const TetrisGame& game)
             scoreText.setPosition({ static_cast<float>(BOARD_WIDTH * cellSize + 20), 50.f });
             window.draw(scoreText);
         }
+
     }
     window.display();
+        
 }
+
 
 Renderer::Renderer()
     : cellSize(30),
-    windowWidth(BOARD_WIDTH * cellSize),
+    windowWidth(BOARD_WIDTH * cellSize+150),
     windowHeight(BOARD_HEIGHT * cellSize),
     window(sf::VideoMode({ static_cast<unsigned int>(windowWidth), static_cast<unsigned int>(windowHeight) }), "Tetris"),
     font(),
@@ -226,11 +271,14 @@ Renderer::Renderer()
     if (!fontLoaded) {
         std::cout << "Font not loaded" << "/n";
     }
+
+    
+
 }
 
 void Renderer::GemeOver(Board& board, TetrisGame& game) {
     if (game.isGameOver()) {
-        game.saveScore();
+        //game.saveScore();
         window.setTitle("Game is over");
         
         Renderer::curr_state = stateMenu;
@@ -260,10 +308,12 @@ void Renderer::run(Board& board, TetrisGame& game)
                 dropTime = sf::Time::Zero;
                 if (game.isGameOver()) {
                     GemeOver(board, game);
+                    game.saveScore();
                 }
             }
 
             if (dropTime >= dropInterval) {
+
                 game.SoftDrop(dropInterval);
                 int cleared = board.DelFullLine();
                 if (cleared > 0) {
