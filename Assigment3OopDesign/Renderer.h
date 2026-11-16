@@ -22,6 +22,9 @@ private:
     sf::Font font;
     bool fontLoaded;
 
+    bool isShadow = false;
+    bool hasGameStarted = false;
+
     void processEvents(TetrisGame& game, sf::Time& dropTime);
     void render( const TetrisGame& game);
 

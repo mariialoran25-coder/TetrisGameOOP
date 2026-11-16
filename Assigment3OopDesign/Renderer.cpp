@@ -40,6 +40,7 @@ void Renderer::processEvents(TetrisGame& game, sf::Time& dropTime)
                         board.clearInner();
                         game.rotate();
                     }
+
                 }
             }
         }
@@ -47,25 +48,36 @@ void Renderer::processEvents(TetrisGame& game, sf::Time& dropTime)
             if (mousePressed->button == sf::Mouse::Button::Left) {
                 int mouseX = mousePressed->position.x;  
                 int mouseY = mousePressed->position.y;
-
                 if (curr_state == stateMenu) {
-                    if (mouseX >= 220 && mouseX <= 420 && mouseY >= 100 && mouseY <= 180) {
+                    if (mouseX >= 300 && mouseX <= 500 && mouseY >= 100 && mouseY <= 180) {
                         curr_state = stateInstructuion;
                     }
-                    else if (mouseX >= 220 && mouseX <= 420 && mouseY >= 250 && mouseY <= 330) {
+                    else if (mouseX >= 300 && mouseX <= 500 && mouseY >= 250  && mouseY <= 330) {
                         game.reset();
                         game.SpawnNewShape();
                         dropTime = sf::Time::Zero;
                         curr_state = stateGame;
+                        hasGameStarted = true;
                     }
-                    else if (mouseX >= 220 && mouseX <= 420 && mouseY >= 400 && mouseY <= 480) {
-                        curr_state = stateGame;
+                    else if (mouseX >= 300 && mouseX <= 500 && mouseY >= 400 && mouseY <= 480) {
+                        if (hasGameStarted) {
+                            curr_state = stateGame;
+                        }
                     }
-                    else if (mouseX >= 220 && mouseX <= 420 && mouseY >= 550 && mouseY <= 630) {
+                    else if (mouseX >= 300 && mouseX <= 500 && mouseY >= 550 && mouseY <= 630) {
                         curr_state = stateStatus;
                     }
-                    else if (mouseX >= 220 && mouseX <= 420 && mouseY >= 700 && mouseY <= 750) {
+                    else if (mouseX >= 300 && mouseX <= 500 && mouseY >= 700 && mouseY <= 750) {
                         window.close();
+                    }
+                }
+                else if (curr_state == stateGame) {
+                    float btnX = static_cast<float>(BOARD_WIDTH * cellSize + 20);
+                    float btnY = 100.f;
+                    float btnW = 120.f;
+                    float btnH = 40.f;
+                    if (mouseX >= btnX && mouseX <= btnX +btnW && mouseY >= btnY && mouseY <= btnY + btnH) {
+                        isShadow = !isShadow;
                     }
                 }
             }
@@ -86,31 +98,31 @@ void Renderer::render(const TetrisGame& game)
         sf::RectangleShape status(sf::Vector2f(200.f, 80.f));
         sf::RectangleShape exit(sf::Vector2f(200.f, 50.f));
 
-        instruction.setPosition({ 220.f, 100.f });
+        instruction.setPosition({ 300.f, 100.f });
         instruction.setFillColor(sf::Color(224, 255, 255));
         instruction.setOutlineColor(sf::Color(0, 0, 200));
         instruction.setOutlineThickness(3.f);
         window.draw(instruction);
 
-        start.setPosition({ 220.f, 250.f });
+        start.setPosition({ 300.f, 250.f });
         start.setFillColor(sf::Color(224, 255, 255));
         start.setOutlineColor(sf::Color(0, 0, 200));
         start.setOutlineThickness(3.f);
         window.draw(start);
 
-        continuee.setPosition({ 220.f, 400.f });
+        continuee.setPosition({ 300.f, 400.f });
         continuee.setFillColor(sf::Color(224, 255, 255));
         continuee.setOutlineColor(sf::Color(0, 0, 200));
         continuee.setOutlineThickness(3.f);
         window.draw(continuee);
 
-        status.setPosition({ 220.f, 550.f });
+        status.setPosition({ 300.f, 550.f });
         status.setFillColor(sf::Color(224, 255, 255));
         status.setOutlineColor(sf::Color(0, 0, 200));
         status.setOutlineThickness(3.f);
         window.draw(status);
 
-        exit.setPosition({ 220.f, 700.f });
+        exit.setPosition({ 300.f, 700.f });
         exit.setFillColor(sf::Color(224, 255, 255));
         exit.setOutlineColor(sf::Color(0, 0, 200));
         exit.setOutlineThickness(3.f);
@@ -120,7 +132,7 @@ void Renderer::render(const TetrisGame& game)
         titleText.setString("TETRIS");
         titleText.setCharacterSize(50);
         titleText.setFillColor(sf::Color(0, 0, 128));
-        titleText.setPosition({ 235.f, 20.f });
+        titleText.setPosition({ 315.f, 20.f });
         window.draw(titleText);
 
 
@@ -136,11 +148,11 @@ void Renderer::render(const TetrisGame& game)
             text1.setCharacterSize(20); text2.setCharacterSize(20); text3.setCharacterSize(20); text4.setCharacterSize(20); text5.setCharacterSize(20);
             text1.setFillColor(sf::Color::Black); text2.setFillColor(sf::Color::Black); text3.setFillColor(sf::Color::Black); text4.setFillColor(sf::Color::Black); text5.setFillColor(sf::Color::Black);
 
-            text1.setPosition({ 225.f, 125.f });
-            text2.setPosition({ 230.f, 275.f });
-            text3.setPosition({ 240.f, 425.f });
-            text4.setPosition({ 240.f, 575.f });
-            text5.setPosition({ 300.f, 715.f });
+            text1.setPosition({ 310.f, 125.f });
+            text2.setPosition({ 315.f, 275.f });
+            text3.setPosition({ 328.f, 425.f });
+            text4.setPosition({ 315.f, 575.f });
+            text5.setPosition({ 385.f, 715.f });
             window.draw(text1); window.draw(text2); window.draw(text3); window.draw(text4); window.draw(text5);
         }
     }
@@ -215,7 +227,8 @@ void Renderer::render(const TetrisGame& game)
                 window.draw(cell);
             }
         }
-        if (game.hasActiveShape()) {
+
+        if (isShadow && game.hasActiveShape()) {
             int shadowX = game.getCurrX();
             int shadowY = game.getShadowY();
             const auto& matrix = game.getCurrMatrix();
@@ -253,9 +266,30 @@ void Renderer::render(const TetrisGame& game)
             window.draw(scoreText);
         }
 
+        sf::RectangleShape button(sf::Vector2f(120.f, 40.f));
+        button.setPosition({ static_cast<float>(BOARD_WIDTH * cellSize + 20), 100.f });
+            
+        if (isShadow) {
+            button.setFillColor(sf::Color(50, 200, 50));
+        }
+        else {
+            button.setFillColor(sf::Color(200, 50, 50));
+        }
+
+        button.setOutlineColor(sf::Color(50, 50, 50));
+        button.setOutlineThickness(2.f);
+        window.draw(button);
+
+        if (fontLoaded) {
+            sf::Text buttonText(font);
+            buttonText.setString(isShadow ? "Shadow: ON" : "Shadow: OFF");
+            buttonText.setCharacterSize(18);
+            buttonText.setFillColor(sf::Color::White);
+            buttonText.setPosition({ static_cast<float>(BOARD_WIDTH * cellSize + 23), 105.f });
+            window.draw(buttonText);
+        }
     }
     window.display();
-        
 }
 
 
